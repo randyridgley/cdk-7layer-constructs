@@ -8,7 +8,8 @@
     "bootstrap": "lerna bootstrap",
     "build": "lerna run build --stream",
     "test": "lerna run test --stream",
-    "lint": "lerna run lint --stream"
+    "lint": "lerna run lint --stream",
+    "package": "lerna run package"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.42.1",

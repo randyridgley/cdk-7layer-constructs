@@ -59,10 +59,9 @@
         }
       },
       "dotnet": {
-        "namespace": "7layerConstructs",
-        "packageId": "7layerConstructs.KinesisFirehoseTransformer"
-      },
-      "sphinx": {}
+        "namespace": "CDK7LayerConstructs",
+        "packageId": "CDK7LayerConstructs.KinesisFirehoseTransformer"
+      }
     }
   },
   "repository": {
