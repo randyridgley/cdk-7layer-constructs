@@ -71,5 +71,6 @@
     "type": "git",
     "url": "https://github.com/randyridgley/cdk-7layer-constructs.git",
     "directory": "packages/cdk-kinesis-firehose-transformer"
-  }
+  },
+  "gitHead": "0b97b222128856dd65353a35e630b8194c8d0e5d"
 }

@@ -1,16 +1,26 @@
 {
-  "name": "cdk-7layer-constructs",
-  "version": "0.1.0",
+  "name": "root",
+  "version": "1.0.0",
   "description": "CDK Constructs for reuse in projects",
   "author": "Randy Ridgley",
   "license": "Apache-2.0",
+  "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "build": "lerna run build --stream",
     "test": "lerna run test --stream",
     "lint": "lerna run lint --stream",
     "package": "lerna run package",
-    "publish": "lerna publish"
+    "versionup": "lerna version --conventional-commits --no-git-tag-version",
+    "versionup:patch": "lerna version patch --conventional-commits --no-git-tag-version",
+    "versionup:minor": "lerna version minor --conventional-commits --no-git-tag-version",
+    "versionup:major": "lerna version major --conventional-commits --no-git-tag-version",
+    "postversionup": "npm run commit-version",
+    "postversionup:patch": "npm run commit-version",
+    "postversionup:minor": "npm run commit-version",
+    "postversionup:major": "npm run commit-version",
+    "commit-version": "git add . && git commit -m \"chore(release): publish `node -p 'require(\"./lerna.json\").version'`\"",
+    "release": "lerna publish from-package"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.42.1",
@@ -31,7 +41,6 @@
     "ts-jest": "^26.1.0",
     "typescript": "~3.9.3"
   },
-  "private": true,
   "workspaces": [
     "packages/*"
   ],
