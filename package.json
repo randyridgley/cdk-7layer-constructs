@@ -1,26 +1,25 @@
 {
   "name": "root",
   "version": "1.0.0",
-  "description": "CDK Constructs for reuse in projects",
+  "description": "CDK Constructs for reuse in personal projects",
   "author": "Randy Ridgley",
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "build": "lerna run build --stream",
-    "test": "lerna run test --stream",
-    "lint": "lerna run lint --stream",
-    "package": "lerna run package",
-    "versionup": "lerna version --conventional-commits --no-git-tag-version",
-    "versionup:patch": "lerna version patch --conventional-commits --no-git-tag-version",
-    "versionup:minor": "lerna version minor --conventional-commits --no-git-tag-version",
-    "versionup:major": "lerna version major --conventional-commits --no-git-tag-version",
-    "postversionup": "npm run commit-version",
-    "postversionup:patch": "npm run commit-version",
-    "postversionup:minor": "npm run commit-version",
-    "postversionup:major": "npm run commit-version",
-    "commit-version": "git add . && git commit -m \"chore(release): publish `node -p 'require(\"./lerna.json\").version'`\"",
-    "release": "lerna publish from-package"
+    "prepare": "lerna run build",
+    "test": "cdkdx test",
+    "build": "lerna run build",
+    "outdated:all": "yarn outdated",
+    "upgrade:all": "yarn upgrade",
+    "upgrade:cdk": "lerna run upgrade:cdk && yarn",
+    "upgrade-interactive:all": "yarn upgrade-interactive --latest",
+    "lint": "cdkdx lint --report-unused-disable-directives",
+    "lint:fix": "cdkdx lint --fix",
+    "docgen": "lerna run docgen --scope @cdk-7layer-constructs/*",
+    "package": "lerna run package --scope @cdk-7layer-constructs/*",
+    "release:npm": "lerna run release:npm --scope @cdk-7layer-constructs/*",
+    "release:pypi": "lerna run release:pypi --scope @cdk-7layer-constructs/*"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.42.1",
@@ -28,6 +27,7 @@
     "@types/node": "14.0.10",
     "@typescript-eslint/eslint-plugin": "^3.1.0",
     "@typescript-eslint/parser": "^3.1.0",
+    "cdkdx": "^0.1.14",
     "eslint": "^7.1.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-import": "^2.20.2",
@@ -42,7 +42,8 @@
     "typescript": "~3.9.3"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/*"
   ],
   "lint-staged": {
     "packages/**/*.{ts}": [

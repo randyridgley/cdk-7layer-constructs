@@ -1,0 +1,31 @@
+{
+  "name": "kinesis-firehose-transformer-app",
+  "version": "0.1.0",
+  "license": "MIT",
+  "author": "Ridgley, Randy",
+  "engines": {
+    "node": ">= 10.17.0"
+  },
+  "scripts": {
+    "build": "cdkdx build",
+    "test": "cdkdx test",
+    "lint": "cdkdx lint",
+    "cdk": "cdk"
+  },
+  "peerDependencies": {},
+  "dependencies": {
+    "@aws-cdk/core": "^1.56.0",
+    "source-map-support": "^0.5.19"
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "^1.56.0",
+    "@types/node": "^10.17.0",
+    "aws-cdk": "^1.56.0",
+    "cdkdx": "^0.1.14"
+  },
+  "eslintConfig": {
+    "extends": [
+      "cdk"
+    ]
+  }
+}
