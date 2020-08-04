@@ -19,14 +19,14 @@
     "transformation",
     "streaming",
     "@cdk-7layer-constructs"
-  ],  
+  ],
   "engines": {
     "node": ">= 10.17.0"
   },
   "files": [
     "lib",
     ".jsii"
-  ],  
+  ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
@@ -34,7 +34,26 @@
     "test": "cdkdx test",
     "lint": "cdkdx lint",
     "docgen": "cdkdx docgen",
-    "package": "cdkdx package"
+    "package": "cdkdx package",
+    "release:npm": "cdkdx release npm",
+    "release:pypi": "cdkdx release pypi"
+  },
+  "jsii": {
+    "outdir": "dist",
+    "tsc": {
+      "outDir": "lib",
+      "rootDir": "src"
+    },
+    "excludeTypescript": [
+      "src/lambdas",
+      "src/**/__tests__"
+    ],
+    "targets": {
+      "python": {
+        "distName": "cdk-7layer-constructs.kinesis-firehose-transformer",
+        "module": "cdk_7layer_constructs.kinesis_firehose_transformer"
+      }
+    }
   },
   "dependencies": {
     "@aws-cdk/aws-glue": "^1.56.0",
@@ -56,5 +75,18 @@
     "extends": [
       "cdk"
     ]
+  },
+  "peerDependencies": {
+    "@aws-cdk/aws-glue": "^1.56.0",
+    "@aws-cdk/aws-iam": "^1.56.0",
+    "@aws-cdk/aws-kinesisfirehose": "^1.56.0",
+    "@aws-cdk/aws-kms": "^1.56.0",
+    "@aws-cdk/aws-logs": "^1.56.0",
+    "@aws-cdk/aws-s3": "^1.56.0",
+    "@aws-cdk/core": "^1.56.0",
+    "constructs": "^3.0.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
