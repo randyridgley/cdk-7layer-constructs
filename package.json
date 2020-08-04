@@ -1,6 +1,6 @@
 {
   "name": "cdk-7layer-constructs",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "CDK Constructs for reuse in projects",
   "author": "Randy Ridgley",
   "license": "Apache-2.0",
