@@ -1,8 +1,7 @@
 {
   "name": "@cdk-7layer-constructs/cdk-kinesis-firehose-transformer",
-  "version": "0.1.0",
+  "version": "1.1.2",
   "description": "Kinesis Delivery Firehose that converts JSON to Parquet and saves raw JSON.",
-  "private": true,
   "keywords": [
     "aws-cdk",
     "cdk",
@@ -32,12 +31,12 @@
     "typescript": "^3.7.5"
   },
   "peerDependencies": {
-    "@aws-cdk/core": "1.56.0",
     "@aws-cdk/aws-glue": "^1.56.0",
     "@aws-cdk/aws-kinesisfirehose": "^1.56.0",
     "@aws-cdk/aws-kms": "^1.56.0",
     "@aws-cdk/aws-logs": "^1.56.0",
     "@aws-cdk/aws-s3": "^1.56.0",
+    "@aws-cdk/core": "1.56.0",
     "constructs": "3.0.4"
   },
   "dependencies": {
@@ -52,20 +51,25 @@
     "outdir": "../../dist",
     "targets": {
       "java": {
-        "package": "com.7layer.constructs.kinesis-firehose-transformer",
+        "package": "com.sevenlayer.constructs",
         "maven": {
-          "groupId": "com.7layer.constructs",
-          "artifactId": "kinesis-firehose-transformer"
+          "groupId": "com.sevenlayer.constructs",
+          "artifactId": "cdk-kinesis-firehose-transformer"
         }
       },
       "dotnet": {
-        "namespace": "CDK7LayerConstructs",
-        "packageId": "CDK7LayerConstructs.KinesisFirehoseTransformer"
+        "namespace": "SevenLayer.CDK.Constructs",
+        "packageId": "SevenLayer.CDK.Constructs.CDKKinesisFirehoseTransformer"
+      },
+      "python": {
+        "distName": "cdk-7layer-constructs.cdk-kinesis-firehose-transformer",
+        "module": "cdk-7layer-constructs.cdk_kinesis_firehose_transformer"
       }
     }
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/randyridgley/cdk-7layer-constructs.git"
+    "url": "https://github.com/randyridgley/cdk-7layer-constructs.git",
+    "directory": "packages/cdk-kinesis-firehose-transformer"
   }
 }

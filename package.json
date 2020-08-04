@@ -9,7 +9,8 @@
     "build": "lerna run build --stream",
     "test": "lerna run test --stream",
     "lint": "lerna run lint --stream",
-    "package": "lerna run package"
+    "package": "lerna run package",
+    "publish": "lerna publish"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.42.1",
