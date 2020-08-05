@@ -19,12 +19,23 @@
     "docgen": "lerna run docgen --scope @cdk-7layer-constructs/*",
     "package": "lerna run package --scope @cdk-7layer-constructs/*",
     "release:npm": "lerna run release:npm --scope @cdk-7layer-constructs/*",
-    "release:pypi": "lerna run release:pypi --scope @cdk-7layer-constructs/*"
+    "release:pypi": "lerna run release:pypi --scope @cdk-7layer-constructs/*",
+    "versionup": "lerna version --conventional-commits --no-git-tag-version --scope @cdk-7layer-constructs/*",
+    "versionup:patch": "lerna version patch --conventional-commits --no-git-tag-version",
+    "versionup:minor": "lerna version minor --conventional-commits --no-git-tag-version",
+    "versionup:major": "lerna version major --conventional-commits --no-git-tag-version",
+    "postversionup": "npm run commit-version",
+    "postversionup:patch": "npm run commit-version",
+    "postversionup:minor": "npm run commit-version",
+    "postversionup:major": "npm run commit-version",
+    "commit-version": "git add . && git commit -m \"chore(release): publish `node -p 'require(\"./lerna.json\").version'`\"",
+    "release": "lerna run release:all --scope @cdk-7layer-constructs/*"
   },
   "devDependencies": {
     "@types/node": "14.0.10",
     "cdkdx": "^0.1.14",
-    "lerna": "^3.22.1"
+    "lerna": "^3.22.1",
+    "@monorepo-utils/collect-changelog": "^2.2.0"
   },
   "workspaces": [
     "packages/*",

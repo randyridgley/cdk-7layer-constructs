@@ -57,6 +57,25 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
 
     const firehoseLogStreamArn = `arn:${cdk.Aws.PARTITION}:logs:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:log-group:${firehoseLogGroup.logGroupName}:log-stream:${firehoseLogStream.logStreamName}`;
 
+    const partitionKeys = [
+      {
+        name: 'year',
+        type: glue.Schema.SMALL_INT
+      },
+      {
+        name: 'month',
+        type: glue.Schema.SMALL_INT
+      },
+      {
+        name: 'day',
+        type: glue.Schema.SMALL_INT
+      },
+      {
+        name: 'hour',
+        type: glue.Schema.SMALL_INT
+      }
+    ];
+
     const kdfTransformerRole = new iam.Role(this, 'FirehoseRole', {
       assumedBy: new iam.ServicePrincipal('firehose.amazonaws.com'),
       inlinePolicies: {
@@ -159,7 +178,8 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
         compressed: false,
         description: `Backup original data table for ${props.sourceBackupConfig.tableName}`,
         s3Prefix: props.sourceBackupConfig.targetS3prefix ?? `${props.sourceBackupConfig.tableName}/processed/`,
-        storedAsSubDirectories: false,      
+        storedAsSubDirectories: false,     
+        partitionKeys: partitionKeys 
       });
 
       backupConfig = {
@@ -217,6 +237,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
       description: `Target Parquet Table for ${props.targetTableConfig.tableName}`,
       s3Prefix: props.targetTableConfig.targetS3prefix ?? `${props.targetTableConfig.tableName}/processed/`,
       storedAsSubDirectories: false,      
+      partitionKeys: partitionKeys
     });
 
     const transformerDS = new kdf.CfnDeliveryStream(this, 'TransformerDeliveryStream', {
