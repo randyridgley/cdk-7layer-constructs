@@ -40,6 +40,7 @@ export interface KinesisFirehoseTransformerProps {
 
 export class KinesisFirehoseTransformer extends cdk.Construct {
   public readonly kinesisFirehoseArn: string;
+  public readonly deliveryStreamName: string
 
   constructor(scope: cdk.Construct, id: string, props: KinesisFirehoseTransformerProps) {
     super(scope, id);
@@ -287,5 +288,6 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
     });
 
     this.kinesisFirehoseArn = transformerDS.attrArn;
+    this.deliveryStreamName = transformerDS.deliveryStreamName as string
   }
 }
