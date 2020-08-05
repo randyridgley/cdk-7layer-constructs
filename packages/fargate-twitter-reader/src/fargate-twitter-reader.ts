@@ -5,6 +5,7 @@ import { DockerImageAsset } from '@aws-cdk/aws-ecr-assets';
 import { Vpc, SubnetType, SecurityGroup } from '@aws-cdk/aws-ec2';
 import { AwsLogDriver, Cluster, ContainerImage, FargateTaskDefinition, FargateService } from '@aws-cdk/aws-ecs';
 import * as sm from '@aws-cdk/aws-secretsmanager';
+import * as path from 'path';
 
 export interface TwitterConfig {
   readonly consumerKey:string,
@@ -17,7 +18,9 @@ export interface FargateTwitterReaderProps {
   readonly twitterConfig:TwitterConfig,
   readonly topics: string[],
   readonly languages: string[],
-  readonly kinesisFirehoseName: string
+  readonly kinesisFirehoseName: string,
+  readonly vpc: Vpc,
+  readonly serviceSecurityGroup: SecurityGroup
 }
 
 export class FargateTwitterReader extends Construct {
@@ -69,21 +72,9 @@ export class FargateTwitterReader extends Construct {
       resources: ['*']
     }));
 
-    const vpc = new Vpc(this, "FargateVPC", {
-      maxAzs: 3,
-      subnetConfiguration: [
-        {
-          cidrMask: 24,
-          name: "FargatePublicSubnet",
-          subnetType: SubnetType.PUBLIC,
-        },
-      ],
-      natGateways: 0,
-    });
-
-    const cluster = new Cluster(this, "FargateCluster", {
-      vpc: vpc,
-      clusterName: "FargateCluster",
+    const cluster = new Cluster(this, "FargateTwitterCluster", {
+      vpc: props.vpc,
+      clusterName: `${props.kinesisFirehoseName}-FargateCluster`,
     });
 
     const twitterTaskDef = new FargateTaskDefinition(this, 'TwitterDriverTaskDefinition', {
@@ -94,8 +85,7 @@ export class FargateTwitterReader extends Construct {
     })
 
     const twitterImage = new DockerImageAsset(this, "TwitterWorkerDockerImage", {
-      repositoryName: 'cdk-7layer-constructs/twitter',
-      directory: 'container/twitter/'
+      directory: path.join(__dirname, '../container/twitter/')
     });
 
     const twitterLogGroup = new LogGroup(this, 'TwitterLogGroup', {
@@ -120,7 +110,7 @@ export class FargateTwitterReader extends Construct {
       cluster: cluster,
       desiredCount: 1,
       taskDefinition: twitterTaskDef,
-      securityGroup: SecurityGroup.fromSecurityGroupId(this, 'SGTwitterService', vpc.vpcDefaultSecurityGroup),
+      securityGroup: props.serviceSecurityGroup,
       assignPublicIp: true,
       serviceName: `${props.kinesisFirehoseName}-TwitterDriverService`,
       vpcSubnets: {subnetType: SubnetType.PUBLIC}
