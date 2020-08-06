@@ -58,11 +58,12 @@ export class FargateTwitterReaderAppStack extends Stack {
       enableCloudwatchLogging: true,
       targetTableConfig: {
         columns: tweetColumns,
-        glueDatabaseArn: db.databaseArn,
+        databaseArn: db.databaseArn,
         tableName: 'r_twitter',
-        targetS3BucketArn: bucket.bucketArn,
-        targetS3prefix: 'twitter/raw/'
-      }      
+        s3BucketArn: bucket.bucketArn,
+        s3prefix: 'twitter/raw/'
+      },
+      useLakeformation: true
     });
 
     const sg = new ec2.SecurityGroup(this, 'SecurityGroup', {
@@ -75,7 +76,7 @@ export class FargateTwitterReaderAppStack extends Stack {
     sg.addIngressRule(sg, ec2.Port.tcp(80));
 
     new ft.FargateTwitterReader(this, 'FargateTwitterReader', {
-      kinesisFirehoseName: twitter.deliveryStreamName,
+      kinesisFirehoseName: twitter.streamName,
       languages: ['en', 'es', 'fr'],
       topics: ['aws', 'cdk', 'devops'],
       twitterConfig: {

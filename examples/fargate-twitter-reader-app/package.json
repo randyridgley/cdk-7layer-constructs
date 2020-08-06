@@ -20,7 +20,7 @@
     "@aws-cdk/aws-s3": "^1.56.0",
     "@aws-cdk/core": "^1.56.0",
     "@cdk-7layer-constructs/fargate-twitter-reader": "^0.1.2",
-    "@cdk-7layer-constructs/kinesis-firehose-transformer": "^0.1.4",
+    "@cdk-7layer-constructs/kinesis-firehose-transformer": "^0.1.9",
     "source-map-support": "^0.5.19"
   },
   "devDependencies": {

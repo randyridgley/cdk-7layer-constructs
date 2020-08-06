@@ -48,13 +48,13 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
   constructor(scope: cdk.Construct, id: string, props: KinesisFirehoseTransformerProps) {
     super(scope, id);
 
-    const firehoseLogGroup = new LogGroup(this, 'KinesisFirehoseLogGroup', {
+    const firehoseLogGroup = new LogGroup(this, 'LogGroup', {
       logGroupName: props.logsConfig ? props.logsConfig.logsGroupName : `/aws/kinesis-firehose/${props.deliveryStreamName}`,
       retention: props.logsConfig ? props.logsConfig.logsRetentionDays : RetentionDays.ONE_WEEK,
       removalPolicy: props.logsConfig ? props.logsConfig.logsRemovalPolicy : cdk.RemovalPolicy.RETAIN
     });
 
-    const firehoseLogStream = new LogStream(this, 'KinesisFirehoseLogStream', {
+    const firehoseLogStream = new LogStream(this, 'LogStream', {
       logGroup: firehoseLogGroup,
       removalPolicy: props.logsConfig ? props.logsConfig.logsRemovalPolicy : cdk.RemovalPolicy.RETAIN
     });
@@ -80,7 +80,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
       }
     ];
 
-    const kdfTransformerRole = new Role(this, 'FirehoseRole', {
+    const kdfTransformerRole = new Role(this, 'Role', {
       assumedBy: new ServicePrincipal('firehose.amazonaws.com'),
       inlinePolicies: {
         'GluePermissions' : new PolicyDocument({
@@ -126,7 +126,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
     let encryptionConfig: kdf.CfnDeliveryStream.EncryptionConfigurationProperty | undefined
 
     if(props.createEncryptionKey) {
-      const encryptionKey = new Key(this, 'TransformerKmsKey', {
+      const encryptionKey = new Key(this, 'KmsKey', {
         alias: `${props.deliveryStreamName}TransformerKey`,
         description: `Encryption key for all data using ${props.deliveryStreamName}`,
         enabled: true,
@@ -146,14 +146,14 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
     let backupConfig: kdf.CfnDeliveryStream.S3DestinationConfigurationProperty | undefined;
 
     if(props.sourceBackupConfig) {
-      const sourceDatabase = Database.fromDatabaseArn(this, 'GlueSourceDatabase', props.sourceBackupConfig.databaseArn);
+      const sourceDatabase = Database.fromDatabaseArn(this, 'SourceDB', props.sourceBackupConfig.databaseArn);
 
       let sourceBucket:Bucket;
 
       if(props.sourceBackupConfig.s3BucketArn) {
-        sourceBucket = Bucket.fromBucketArn(this, 'SourceS3Bucket', props.sourceBackupConfig.s3BucketArn) as Bucket
+        sourceBucket = Bucket.fromBucketArn(this, 'SourceBucket', props.sourceBackupConfig.s3BucketArn) as Bucket
       } else {
-        sourceBucket = new Bucket(this, 'SourceS3Bucket', {});
+        sourceBucket = new Bucket(this, 'SourceBucket', {});
       }
 
       sourceBucket.grantReadWrite(kdfTransformerRole);
@@ -181,10 +181,10 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
           ],
           resources: ['*']
         }));
-        makeLakeFormationResource(this, 'SourceDataLakeBucketResource', sourceBucket.bucketArn, kdfTransformerRole.roleArn);
+        makeLakeFormationResource(this, 'SourceBucketResource', 'SourceResourcePermission', sourceBucket.bucketArn, kdfTransformerRole.roleArn);
       }
 
-      const sourceTable = new Table(this, 'SourceGlueTable', {
+      const sourceTable = new Table(this, 'SourceTable', {
         columns: props.sourceBackupConfig.columns,
         dataFormat: DataFormat.JSON,
         database: sourceDatabase,
@@ -198,7 +198,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
       });
 
       if(props.useLakeformation) {
-        allowLakeFormationTableAccess(this, 'SourceTable', sourceDatabase.databaseName, sourceTable, kdfTransformerRole.roleArn)
+        allowLakeFormationTableAccess(this, 'SourceDBPermission', 'SourceTablePermission', sourceDatabase.databaseName, sourceTable, kdfTransformerRole.roleArn)
       }
 
       backupConfig = {
@@ -219,13 +219,13 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
       }
     }
 
-    let targetDatabase = Database.fromDatabaseArn(this, 'GlueTargetDatabase', props.targetTableConfig.databaseArn);            
+    let targetDatabase = Database.fromDatabaseArn(this, 'TargetDB', props.targetTableConfig.databaseArn);            
     let targetBucket:Bucket;
 
     if(props.targetTableConfig.s3BucketArn) {
-      targetBucket = Bucket.fromBucketArn(this, 'TargetS3Bucket', props.targetTableConfig.s3BucketArn) as Bucket
+      targetBucket = Bucket.fromBucketArn(this, 'TargetBucket', props.targetTableConfig.s3BucketArn) as Bucket
     } else {
-      targetBucket = new Bucket(this, 'TargetS3Bucket', {});
+      targetBucket = new Bucket(this, 'TargetBucket', {});
     }
 
     targetBucket.grantReadWrite(kdfTransformerRole);
@@ -246,7 +246,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
     }));
 
     if(props.useLakeformation) {
-      makeLakeFormationResource(this, 'TargetDataLakeBucketResource', targetBucket.bucketArn, kdfTransformerRole.roleArn);
+      makeLakeFormationResource(this, 'TargetBucketResource', 'TargetBucketPermission', targetBucket.bucketArn, kdfTransformerRole.roleArn);
     }
 
     const targetTable = new Table(this, 'TargetParquetTable', {
@@ -263,10 +263,10 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
     });
 
     if(props.useLakeformation) {
-      allowLakeFormationTableAccess(this, 'SourceTable', targetDatabase.databaseName, targetTable, kdfTransformerRole.roleArn)
+      allowLakeFormationTableAccess(this, 'TargetDBPermission', 'TargetTablePermission', targetDatabase.databaseName, targetTable, kdfTransformerRole.roleArn)
     }
 
-    const transformerDS = new kdf.CfnDeliveryStream(this, 'TransformerDeliveryStream', {
+    const transformerDS = new kdf.CfnDeliveryStream(this, 'KDS', {
       deliveryStreamName: props.deliveryStreamName,
       deliveryStreamType: 'DirectPut',
       extendedS3DestinationConfiguration: {
@@ -317,14 +317,14 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
   }
 }
 
-export function makeLakeFormationResource(construct: cdk.Construct, id: string, bucketArn: string, roleArn:string) {
-  const dlResource = new CfnResource(construct, `${id}Resource`, {
+export function makeLakeFormationResource(construct: cdk.Construct, resourceId: string, permissionId:string, bucketArn: string, roleArn:string) {
+  const dlResource = new CfnResource(construct, resourceId, {
     resourceArn: bucketArn,
     roleArn: roleArn,
     useServiceLinkedRole: false
   });
 
-  const dlPermission = new CfnPermissions(construct, `${id}Permission`, {
+  const dlPermission = new CfnPermissions(construct, permissionId, {
     dataLakePrincipal: {
       dataLakePrincipalIdentifier: roleArn,
     },
@@ -340,9 +340,9 @@ export function makeLakeFormationResource(construct: cdk.Construct, id: string, 
   dlPermission.node.addDependency(dlResource)
 }
 
-export function allowLakeFormationTableAccess(construct: cdk.Construct, id: string, databaseName:string, table:Table, roleArn:string) {
+export function allowLakeFormationTableAccess(construct: cdk.Construct, dbPermissionId: string, tablePermissionId: string, databaseName:string, table:Table, roleArn:string) {
       // Job LakeFormation permission to allow access to create table under secure_db
-      new CfnPermissions(construct, `${id}DBPermission`, {
+      new CfnPermissions(construct, dbPermissionId, {
         dataLakePrincipal: {
           dataLakePrincipalIdentifier: roleArn,
         },
@@ -359,7 +359,7 @@ export function allowLakeFormationTableAccess(construct: cdk.Construct, id: stri
       });
 
       // do I need these lakeformation permissions for the kinesis role?
-      const tablePermission = new CfnPermissions(construct, `${id}TablePermissions`, {
+      const tablePermission = new CfnPermissions(construct, tablePermissionId, {
         dataLakePrincipal: {
           dataLakePrincipalIdentifier: roleArn
         },

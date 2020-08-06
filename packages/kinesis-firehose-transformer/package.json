@@ -1,7 +1,7 @@
 {
   "name": "@cdk-7layer-constructs/kinesis-firehose-transformer",
   "description": "Kinesis Firehose Transformer to automatically convert JSON data sent to Firehose to Parquet",
-  "version": "0.1.5",
+  "version": "0.1.9",
   "license": "Apache-2.0",
   "author": {
     "name": "Randy Ridgley",
@@ -34,15 +34,7 @@
     "docgen": "cdkdx docgen",
     "package": "cdkdx package",
     "release:npm": "cdkdx release npm",
-    "release:pypi": "cdkdx release pypi",
-    "versionup": "lerna version --conventional-commits --no-git-tag-version --scope @cdk-7layer-constructs/*",
-    "versionup:patch": "npm version patch",
-    "versionup:minor": "npm version minor",
-    "versionup:major": "npm version major",
-    "postversionup": "npm run commit-version",
-    "postversionup:patch": "npm run commit-version",
-    "postversionup:minor": "npm run commit-version",
-    "postversionup:major": "npm run commit-version"
+    "release:pypi": "cdkdx release pypi"
   },
   "jsii": {
     "outdir": "dist",

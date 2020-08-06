@@ -22,7 +22,15 @@
     "release:npm": "lerna run release:npm --scope @cdk-7layer-constructs/*",
     "release:pypi": "lerna run release:pypi --scope @cdk-7layer-constructs/*",
     "release": "npm run release:npm && npm run release:pypi",
-    "commit-version": "git add . && git commit -m \"chore(release): publish `node -p 'require(\"./lerna.json\").version'`\""
+    "commit-version": "git add . && git commit -m \"chore(release): publish `node -p 'require(\"./lerna.json\").version'`\"",
+    "versionup": "lerna version --conventional-commits --no-git-tag-version --scope @cdk-7layer-constructs/*",
+    "versionup:patch": "lerna version patch --conventional-commits --no-git-tag-version --scope @cdk-7layer-constructs/*",
+    "versionup:minor": "lerna version minor --conventional-commits --no-git-tag-version --scope @cdk-7layer-constructs/*",
+    "versionup:major": "lerna version major --conventional-commits --no-git-tag-version --scope @cdk-7layer-constructs/*",
+    "postversionup": "npm run commit-version",
+    "postversionup:patch": "npm run commit-version",
+    "postversionup:minor": "npm run commit-version",
+    "postversionup:major": "npm run commit-version"
   },
   "devDependencies": {
     "@types/node": "14.0.10",
