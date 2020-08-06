@@ -15,10 +15,10 @@ test('default setup', () => {
     enableCloudwatchLogging: false,
     targetTableConfig: {
       columns: [],
-      glueDatabaseArn: "aws:::glue:database",
+      databaseArn: "aws:::glue:database",
       tableName: 'testTable',
-      targetS3BucketArn: 'arn:::s3:bucket',
-      targetS3prefix: 'processed/'
+      s3BucketArn: 'arn:::s3:bucket',
+      s3prefix: 'processed/'
     },
     logsConfig: {
       logsGroupName: '/aws/test/firehose/'

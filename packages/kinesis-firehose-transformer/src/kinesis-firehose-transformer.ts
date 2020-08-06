@@ -6,19 +6,19 @@ import * as logs from '@aws-cdk/aws-logs';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as cdk from '@aws-cdk/core';
 
-export interface TargetGlueTableConfig {
+export interface TargetTableConfig {
   readonly columns: glue.Column[],
-  readonly glueDatabaseArn: string,
-  readonly targetS3BucketArn?: string
-  readonly targetS3prefix?: string
+  readonly databaseArn: string,
+  readonly s3BucketArn?: string
+  readonly s3prefix?: string
   readonly tableName: string
 }
 
 export interface SourceBackupConfig {
   readonly columns: glue.Column[],
-  readonly glueDatabaseArn: string,
-  readonly targetS3BucketArn?: string
-  readonly targetS3prefix?: string
+  readonly databaseArn: string,
+  readonly s3BucketArn?: string
+  readonly s3prefix?: string
   readonly tableName: string
 }
 
@@ -29,7 +29,7 @@ export interface LogsConfig {
 }
 
 export interface KinesisFirehoseTransformerProps {
-  readonly targetTableConfig: TargetGlueTableConfig;
+  readonly targetTableConfig: TargetTableConfig;
   readonly sourceBackupConfig?: SourceBackupConfig;
   readonly processingConfig?: kdf.CfnDeliveryStream.ProcessingConfigurationProperty;
   readonly logsConfig?: LogsConfig;
@@ -40,7 +40,8 @@ export interface KinesisFirehoseTransformerProps {
 
 export class KinesisFirehoseTransformer extends cdk.Construct {
   public readonly kinesisFirehoseArn: string;
-  public readonly deliveryStreamName: string
+  public readonly streamName: string
+  public readonly kmsKeyId: string | undefined;
 
   constructor(scope: cdk.Construct, id: string, props: KinesisFirehoseTransformerProps) {
     super(scope, id);
@@ -130,7 +131,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
         enableKeyRotation: true,
         removalPolicy: cdk.RemovalPolicy.RETAIN // how to handle this?
       });
-  
+      this.kmsKeyId = encryptionKey.keyId;
       encryptionKey.grantEncryptDecrypt(kdfTransformerRole);
 
       encryptionConfig = {
@@ -143,12 +144,12 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
     let backupConfig: kdf.CfnDeliveryStream.S3DestinationConfigurationProperty | undefined;
 
     if(props.sourceBackupConfig) {
-      const sourceDatabase = glue.Database.fromDatabaseArn(this, 'GlueSourceDatabase', props.sourceBackupConfig.glueDatabaseArn);
+      const sourceDatabase = glue.Database.fromDatabaseArn(this, 'GlueSourceDatabase', props.sourceBackupConfig.databaseArn);
 
       let sourceBucket:s3.IBucket;
 
-      if(props.sourceBackupConfig.targetS3BucketArn) {
-        sourceBucket = s3.Bucket.fromBucketArn(this, 'SourceS3Bucket', props.sourceBackupConfig.targetS3BucketArn)
+      if(props.sourceBackupConfig.s3BucketArn) {
+        sourceBucket = s3.Bucket.fromBucketArn(this, 'SourceS3Bucket', props.sourceBackupConfig.s3BucketArn)
       } else {
         sourceBucket = new s3.Bucket(this, 'SourceS3Bucket', {});
       }
@@ -178,7 +179,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
         bucket: sourceBucket,
         compressed: false,
         description: `Backup original data table for ${props.sourceBackupConfig.tableName}`,
-        s3Prefix: props.sourceBackupConfig.targetS3prefix ?? `${props.sourceBackupConfig.tableName}/processed/`,
+        s3Prefix: props.sourceBackupConfig.s3prefix ?? `${props.sourceBackupConfig.tableName}/processed/`,
         storedAsSubDirectories: false,     
         partitionKeys: partitionKeys 
       });
@@ -201,11 +202,11 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
       }
     }
 
-    let targetDatabase = glue.Database.fromDatabaseArn(this, 'GlueTargetDatabase', props.targetTableConfig.glueDatabaseArn);            
+    let targetDatabase = glue.Database.fromDatabaseArn(this, 'GlueTargetDatabase', props.targetTableConfig.databaseArn);            
     let targetBucket:s3.IBucket;
 
-    if(props.targetTableConfig.targetS3BucketArn) {
-      targetBucket = s3.Bucket.fromBucketArn(this, 'TargetS3Bucket', props.targetTableConfig.targetS3BucketArn)
+    if(props.targetTableConfig.s3BucketArn) {
+      targetBucket = s3.Bucket.fromBucketArn(this, 'TargetS3Bucket', props.targetTableConfig.s3BucketArn)
     } else {
       targetBucket = new s3.Bucket(this, 'TargetS3Bucket', {});
     }
@@ -227,7 +228,6 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
       ]
     }));
 
-    // append the YYYY/MM/DD/HH columns to the list of columns
     new glue.Table(this, 'TargetParquetTable', {
       columns: props.targetTableConfig.columns,
       dataFormat: glue.DataFormat.PARQUET,
@@ -236,7 +236,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
       bucket: targetBucket,
       compressed: false,
       description: `Target Parquet Table for ${props.targetTableConfig.tableName}`,
-      s3Prefix: props.targetTableConfig.targetS3prefix ?? `${props.targetTableConfig.tableName}/processed/`,
+      s3Prefix: props.targetTableConfig.s3prefix ?? `${props.targetTableConfig.tableName}/processed/`,
       storedAsSubDirectories: false,      
       partitionKeys: partitionKeys
     });
@@ -288,6 +288,6 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
     });
 
     this.kinesisFirehoseArn = transformerDS.attrArn;
-    this.deliveryStreamName = transformerDS.deliveryStreamName as string
+    this.streamName = transformerDS.deliveryStreamName as string
   }
 }
