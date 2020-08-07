@@ -1,6 +1,6 @@
 {
   "name": "@cdk-7layer-constructs/fargate-twitter-reader",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "license": "Apache-2.0",
   "author": "Ridgley, Randy",
   "engines": {
@@ -26,11 +26,11 @@
     "postversionup:major": "npm run commit-version"
   },
   "peerDependencies": {
-    "@aws-cdk/core": "^1.56.0",
     "@aws-cdk/aws-ec2": "^1.56.0",
     "@aws-cdk/aws-ecs": "^1.56.0",
     "@aws-cdk/aws-iam": "^1.56.0",
-    "@aws-cdk/aws-logs": "^1.56.0"
+    "@aws-cdk/aws-logs": "^1.56.0",
+    "@aws-cdk/core": "^1.56.0"
   },
   "dependencies": {
     "@aws-cdk/aws-ec2": "^1.56.0",
