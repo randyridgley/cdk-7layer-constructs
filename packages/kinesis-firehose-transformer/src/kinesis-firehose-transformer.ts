@@ -1,11 +1,12 @@
 import * as cdk from '@aws-cdk/core';
-import * as kdf from '@aws-cdk/aws-kinesisfirehose';
+import { CfnDeliveryStream } from '@aws-cdk/aws-kinesisfirehose';
 import { Column, Database, DataFormat, Table, Schema } from '@aws-cdk/aws-glue';
 import { PolicyStatement, PolicyDocument, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
 import { Key } from '@aws-cdk/aws-kms';
 import { CfnPermissions, CfnResource } from '@aws-cdk/aws-lakeformation';
 import { LogGroup, LogStream, RetentionDays } from '@aws-cdk/aws-logs';
 import { Bucket } from '@aws-cdk/aws-s3';
+import { CustomGlueClassificationResource } from './custom-glue-classification-resource'
 
 export interface TargetTableConfig {
   readonly columns: Column[],
@@ -21,6 +22,7 @@ export interface SourceBackupConfig {
   readonly s3BucketArn?: string
   readonly s3prefix?: string
   readonly tableName: string
+  readonly dataFormat: DataFormat
 }
 
 export interface LogsConfig {
@@ -32,7 +34,7 @@ export interface LogsConfig {
 export interface KinesisFirehoseTransformerProps {
   readonly targetTableConfig: TargetTableConfig;
   readonly sourceBackupConfig?: SourceBackupConfig;
-  readonly processingConfig?: kdf.CfnDeliveryStream.ProcessingConfigurationProperty;
+  readonly processingConfig?: CfnDeliveryStream.ProcessingConfigurationProperty;
   readonly logsConfig?: LogsConfig;
   readonly deliveryStreamName: string;
   readonly enableCloudwatchLogging: boolean;
@@ -123,7 +125,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
       }
     });
 
-    let encryptionConfig: kdf.CfnDeliveryStream.EncryptionConfigurationProperty | undefined
+    let encryptionConfig: CfnDeliveryStream.EncryptionConfigurationProperty | undefined
 
     if(props.createEncryptionKey) {
       const encryptionKey = new Key(this, 'KmsKey', {
@@ -143,7 +145,39 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
       }
     }
 
-    let backupConfig: kdf.CfnDeliveryStream.S3DestinationConfigurationProperty | undefined;
+    const customResourceLambdaRole = new Role(this, "CustomResourceLambdaRole", {
+      assumedBy: new ServicePrincipal("lambda.amazonaws.com")
+    });
+
+    customResourceLambdaRole.addToPolicy(
+      new PolicyStatement({
+        resources: ["*"],
+        actions: [
+          "glue:GetTable",
+          "glue:UpdateTable"
+        ]
+      })
+    );
+
+    customResourceLambdaRole.addToPolicy(
+      new PolicyStatement({
+        resources: ["*"],
+        actions: ["lambda:InvokeFunction"]
+      })
+    );
+
+    customResourceLambdaRole.addToPolicy(
+      new PolicyStatement({
+        resources: ["arn:aws:logs:*:*:*"],
+        actions: [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+      })
+    );
+
+    let backupConfig: CfnDeliveryStream.S3DestinationConfigurationProperty | undefined;
 
     if(props.sourceBackupConfig) {
       const sourceDatabase = Database.fromDatabaseArn(this, 'SourceDB', props.sourceBackupConfig.databaseArn);
@@ -186,7 +220,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
 
       const sourceTable = new Table(this, 'SourceTable', {
         columns: props.sourceBackupConfig.columns,
-        dataFormat: DataFormat.JSON,
+        dataFormat: props.sourceBackupConfig.dataFormat,
         database: sourceDatabase,
         tableName: props.sourceBackupConfig.tableName,
         bucket: sourceBucket,
@@ -197,8 +231,19 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
         partitionKeys: partitionKeys 
       });
 
+      const sourceCC = new CustomGlueClassificationResource(this, "SourceGlueClassification", {
+          dataFormat: getDataFormatString(props.sourceBackupConfig.dataFormat),
+          databaseName: sourceDatabase.databaseName,
+          tableName: props.sourceBackupConfig.tableName,
+          roleArn: customResourceLambdaRole.roleArn
+        }
+      );
+
+      sourceCC.node.addDependency(sourceTable);
+
       if(props.useLakeformation) {
         allowLakeFormationTableAccess(this, 'SourceDBPermission', 'SourceTablePermission', sourceDatabase.databaseName, sourceTable, kdfTransformerRole.roleArn)
+        allowLakeFormationTableAccess(this, 'SourceCustomResourceDBPermission', 'SourceCustomResourcePermission', sourceDatabase.databaseName, sourceTable, customResourceLambdaRole.roleArn)
       }
 
       backupConfig = {
@@ -264,9 +309,19 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
 
     if(props.useLakeformation) {
       allowLakeFormationTableAccess(this, 'TargetDBPermission', 'TargetTablePermission', targetDatabase.databaseName, targetTable, kdfTransformerRole.roleArn)
+      allowLakeFormationTableAccess(this, 'TargetCustomResourceDBPermission', 'TargetCustomResourcePermission', targetDatabase.databaseName, targetTable, customResourceLambdaRole.roleArn)
     }
 
-    const transformerDS = new kdf.CfnDeliveryStream(this, 'KDS', {
+    const targetCC = new CustomGlueClassificationResource(this, "TargetGlueClassification", {
+      dataFormat: 'parquet',
+      databaseName: targetDatabase.databaseName,
+      tableName: props.targetTableConfig.tableName,
+      roleArn: customResourceLambdaRole.roleArn
+    });
+
+    targetCC.node.addDependency(targetTable);
+
+    const transformerDS = new CfnDeliveryStream(this, 'KDS', {
       deliveryStreamName: props.deliveryStreamName,
       deliveryStreamType: 'DirectPut',
       extendedS3DestinationConfiguration: {
@@ -342,7 +397,7 @@ export function makeLakeFormationResource(construct: cdk.Construct, resourceId: 
 
 export function allowLakeFormationTableAccess(construct: cdk.Construct, dbPermissionId: string, tablePermissionId: string, databaseName:string, table:Table, roleArn:string) {
       // Job LakeFormation permission to allow access to create table under secure_db
-      new CfnPermissions(construct, dbPermissionId, {
+      const lfp = new CfnPermissions(construct, dbPermissionId, {
         dataLakePrincipal: {
           dataLakePrincipalIdentifier: roleArn,
         },
@@ -357,6 +412,8 @@ export function allowLakeFormationTableAccess(construct: cdk.Construct, dbPermis
           'DROP'
         ]
       });
+
+      lfp.node.addDependency(table);
 
       // do I need these lakeformation permissions for the kinesis role?
       const tablePermission = new CfnPermissions(construct, tablePermissionId, {
@@ -379,4 +436,28 @@ export function allowLakeFormationTableAccess(construct: cdk.Construct, dbPermis
       });
   
       tablePermission.node.addDependency(table)
+}
+
+export function getDataFormatString(format:DataFormat): string {
+    // Big Ole giant hack fix later
+    switch(format){
+      case DataFormat.APACHE_LOGS:
+        return 'apache_logs'
+      case DataFormat.AVRO:
+        return 'avro'
+      case DataFormat.CLOUDTRAIL_LOGS:
+        return 'cloudtrail_logs'
+      case DataFormat.CSV:
+        return 'csv'
+      case DataFormat.JSON:
+        return 'json'
+      case DataFormat.LOGSTASH:
+        return 'logstash'
+      case DataFormat.ORC:
+        return 'orc'
+      case DataFormat.PARQUET:
+        return 'parquet'
+      default:
+        return 'json'
+    }
 }

@@ -1,7 +1,7 @@
 import { Construct, Stack, StackProps, RemovalPolicy } from '@aws-cdk/core';
 import { KinesisFirehoseTransformer } from '@cdk-7layer-constructs/kinesis-firehose-transformer';
 import { RetentionDays } from '@aws-cdk/aws-logs'
-import { Database, Schema } from '@aws-cdk/aws-glue'
+import { Database, Schema, DataFormat } from '@aws-cdk/aws-glue'
 import { Bucket } from '@Aws-cdk/aws-s3'
 
 export class KinesisFirehoseTransformerAppStack extends Stack {
@@ -51,7 +51,8 @@ export class KinesisFirehoseTransformerAppStack extends Stack {
         databaseArn: sourceDatabase.databaseArn,
         tableName: 'source_table',
         s3BucketArn: sourceBucket.bucketArn,
-        s3prefix: 'raw/'
+        s3prefix: 'raw/',
+        dataFormat: DataFormat.JSON
       },
       useLakeformation: true
     })
