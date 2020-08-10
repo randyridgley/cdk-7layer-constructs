@@ -30,14 +30,17 @@ const onCreate = async (event: CloudFormationCustomResourceCreateEvent): Promise
         table.Parameters = {}  
       }
       table.Parameters.classification = props.dataFormat
+
       const paramsUpdate = {
         DatabaseName: props.databaseName,
         TableInput: {
-            ...table,
+            Name: table.Name,
+            StorageDescriptor: table.StorageDescriptor,
             Parameters: {
                 ...table.Parameters,
-            },            
-        },
+            },
+            PartitionKeys: table.PartitionKeys,
+        }
       };
 
       await glue.updateTable(paramsUpdate).promise();
