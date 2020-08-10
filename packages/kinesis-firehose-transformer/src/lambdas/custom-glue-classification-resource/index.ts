@@ -1,5 +1,7 @@
-import type { CloudFormationCustomResourceEvent, CloudFormationCustomResourceCreateEvent } from 'aws-lambda';
+import type { CloudFormationCustomResourceEvent, CloudFormationCustomResourceCreateEvent, Context } from 'aws-lambda';
 import { Glue } from 'aws-sdk';
+import * as https from 'https';
+import { parse as parseURL } from 'url';
 
 interface GlueClassificationProps {
   tableName: string;
@@ -15,7 +17,51 @@ const getProperties = (props: CloudFormationCustomResourceEvent['ResourcePropert
   dataFormat: props.DataFormat
 });
 
-const onCreate = async (event: CloudFormationCustomResourceCreateEvent): Promise<void> => {
+const getSuccessResponse = (event: CloudFormationCustomResourceEvent) => ({
+  Status: 'SUCCESS',
+  PhysicalResourceId: event.ResourceProperties.Key,
+  StackId: event.StackId,
+  RequestId: event.RequestId,
+  LogicalResourceId: event.LogicalResourceId,
+});
+
+const getErrorResponse = (e: Error, event: CloudFormationCustomResourceEvent) => ({
+  Status: 'FAILED',
+  Reason: e.toString(),
+  PhysicalResourceId: event.ResourceProperties.Key,
+  StackId: event.StackId,
+  RequestId: event.RequestId,
+  LogicalResourceId: event.LogicalResourceId,
+});
+
+const sendResponse = async (response: any, urlString: string) => {
+  console.log(`Sending response to ${urlString}`);
+  const responseBody = JSON.stringify(response);
+  const url = parseURL(urlString);
+  const options = {
+      headers: {
+          'Content-Type': '',
+          'Content-Length': responseBody.length,
+      },
+      hostname: url.hostname,
+      method: 'PUT',
+      port: url.port || 443,
+      path: url.path,
+      rejectUnauthorized: true,
+  };
+
+  return new Promise((resolve, reject) => {
+      const request = https.request(options, (response) => {
+          response.on('end', resolve);
+      });
+      request.on('error', reject);
+
+      request.write(responseBody);
+      request.end();
+  });
+}
+
+const onCreate = async (event: CloudFormationCustomResourceCreateEvent) => {
   const props = getProperties(event.ResourceProperties);
 
   try {
@@ -44,22 +90,32 @@ const onCreate = async (event: CloudFormationCustomResourceCreateEvent): Promise
       };
 
       await glue.updateTable(paramsUpdate).promise();
+      console.log(`Updated Glue Classification for table ${props.tableName}`);
     }
+    return getSuccessResponse(event);
   } catch (e) {
     console.log(`[INFO] ${JSON.stringify(e)}`);
+    return getErrorResponse(e, event);
   }
-  console.log(`Updated Glue Classification for table ${props.tableName}`);
 };
 
-export const handler = async (event: CloudFormationCustomResourceEvent): Promise<void> => {
+export const handler = async (event: CloudFormationCustomResourceEvent, context: Context) => {
+  console.log(`Called with assumed role ${context.identity}`);
   const requestType = event.RequestType;
 
   switch (requestType) {
     case 'Create':
-      return onCreate(event as CloudFormationCustomResourceCreateEvent);
+      const result = onCreate(event as CloudFormationCustomResourceCreateEvent);
+      try {
+        await sendResponse(result, event.ResponseURL);
+      } catch (e) {
+          console.error(`FAILED sending response to ${event.ResponseURL}`, result);
+          throw e;
+      }
+    break;      
     case 'Update':
-      return;
     case 'Delete':
+      await sendResponse(getSuccessResponse(event), event.ResponseURL);
       return;
     default:
       throw new Error(`Invalid request type: ${requestType}`);
