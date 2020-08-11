@@ -39,12 +39,12 @@ export const onCreate = async (event: CloudFormationCustomResourceCreateEvent): 
     const paramsUpdate = {
       DatabaseName: props.databaseName,
       TableInput: {
-          Name: table.Name,
-          StorageDescriptor: table.StorageDescriptor,
-          Parameters: {
-              ...table.Parameters,
-          },
-          PartitionKeys: table.PartitionKeys,
+        Name: table.Name,
+        StorageDescriptor: table.StorageDescriptor,
+        Parameters: {
+            ...table.Parameters,
+        },
+        PartitionKeys: table.PartitionKeys,
       }
     };
 
@@ -58,47 +58,47 @@ export const onCreate = async (event: CloudFormationCustomResourceCreateEvent): 
       RequestId: event.RequestId,
       LogicalResourceId: event.LogicalResourceId,
       Data: {
-          Table: props.tableName,
-          Database: props.databaseName,
+        Table: props.tableName,
+        Database: props.databaseName,
       },
   };
 };
 
 export const onUpdate = async (event: CloudFormationCustomResourceUpdateEvent): Promise<CloudFormationCustomResourceResponse> => {
   return {
-      Status: 'SUCCESS',
-      RequestId: event.RequestId,
-      StackId: event.StackId,
-      LogicalResourceId: event.LogicalResourceId,
-      PhysicalResourceId: event.PhysicalResourceId,
+    Status: 'SUCCESS',
+    RequestId: event.RequestId,
+    StackId: event.StackId,
+    LogicalResourceId: event.LogicalResourceId,
+    PhysicalResourceId: event.PhysicalResourceId,
   };
 };
 
 export const onDelete = async (event: CloudFormationCustomResourceDeleteEvent): Promise<CloudFormationCustomResourceResponse> => {
   return {
-      Status: 'SUCCESS',
-      RequestId: event.RequestId,
-      StackId: event.StackId,
-      LogicalResourceId: event.LogicalResourceId,
-      PhysicalResourceId: event.PhysicalResourceId,
+    Status: 'SUCCESS',
+    RequestId: event.RequestId,
+    StackId: event.StackId,
+    LogicalResourceId: event.LogicalResourceId,
+    PhysicalResourceId: event.PhysicalResourceId,
   };
 };
 
-export const onEvent = (event: CloudFormationCustomResourceEvent): Promise<CloudFormationCustomResourceResponse> => {
+export const handler = (event: CloudFormationCustomResourceEvent): Promise<CloudFormationCustomResourceResponse> => {
   console.log(JSON.stringify(event));
   try {
-      switch (event.RequestType) {
-          case 'Create':
-              return onCreate(event as CloudFormationCustomResourceCreateEvent);
-          case 'Update':
-              return onUpdate(event as CloudFormationCustomResourceUpdateEvent);
-          case 'Delete':
-              return onDelete(event as CloudFormationCustomResourceDeleteEvent);
-          default:
-              return Promise.reject(`Unknown event type in event ${event}`);
-      }
+    switch (event.RequestType) {
+        case 'Create':
+            return onCreate(event as CloudFormationCustomResourceCreateEvent);
+        case 'Update':
+            return onUpdate(event as CloudFormationCustomResourceUpdateEvent);
+        case 'Delete':
+            return onDelete(event as CloudFormationCustomResourceDeleteEvent);
+        default:
+            return Promise.reject(`Unknown event type in event ${event}`);
+    }
   } catch (err) {
-      console.error(err);
-      return Promise.reject('Failed');
+    console.error(err);
+    return Promise.reject('Failed');
   }
 };
