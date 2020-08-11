@@ -22,6 +22,7 @@ const getProperties = (props: CloudFormationCustomResourceEvent['ResourcePropert
 });
 
 export const onCreate = async (event: CloudFormationCustomResourceCreateEvent): Promise<CloudFormationCustomResourceResponse> => {
+  console.log("REQUEST RECEIVED:\n" + JSON.stringify(event));
   const props = getProperties(event.ResourceProperties);
 
   const paramsGet = {
@@ -51,9 +52,11 @@ export const onCreate = async (event: CloudFormationCustomResourceCreateEvent): 
     await glue.updateTable(paramsUpdate).promise();
     console.log(`Updated Glue Classification for table ${props.tableName}`);
   }
+
+  console.log("REQUEST Returned:\n" + JSON.stringify(event));
   return {
       Status: 'SUCCESS',
-      PhysicalResourceId: event.ResourceProperties.Key,
+      PhysicalResourceId: `${props.databaseName}.${props.tableName}`,
       StackId: event.StackId,
       RequestId: event.RequestId,
       LogicalResourceId: event.LogicalResourceId,

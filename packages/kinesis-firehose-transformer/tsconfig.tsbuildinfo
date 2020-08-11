@@ -1370,7 +1370,7 @@
         "affectsGlobalScope": false
       },
       "../../node_modules/@types/aws-lambda/trigger/sqs.d.ts": {
-        "version": "19d2c0675d0155ab788680d044aa95747032001714ba1b9e7d29bdb0a047a5d6",
+        "version": "1d5690b86bc265d65446675bd52c29d502bad14702aa356e0cbf87341c7e2193",
         "affectsGlobalScope": false
       },
       "../../node_modules/@types/aws-lambda/index.d.ts": {

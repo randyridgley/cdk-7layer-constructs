@@ -1,8 +1,9 @@
 {
   "name": "kinesis-firehose-transformer-app",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "license": "MIT",
   "author": "Ridgley, Randy",
+  "private": true,
   "engines": {
     "node": ">= 10.17.0"
   },
@@ -10,20 +11,21 @@
     "build": "cdkdx build",
     "test": "cdkdx test",
     "lint": "cdkdx lint",
-    "cdk": "cdk"
+    "upgrade:cdk": "cdkdx upgrade-cdk",
+    "docgen": "cdkdx docgen"
   },
   "dependencies": {
-    "@aws-cdk/aws-glue": "^1.56.0",
-    "@aws-cdk/aws-logs": "^1.56.0",
-    "@aws-cdk/aws-s3": "^1.56.0",
-    "@aws-cdk/core": "^1.56.0",
-    "@cdk-7layer-constructs/kinesis-firehose-transformer": "^0.1.20",
+    "@aws-cdk/aws-glue": "^1.57.0",
+    "@aws-cdk/aws-logs": "^1.57.0",
+    "@aws-cdk/aws-s3": "^1.57.0",
+    "@aws-cdk/core": "^1.57.0",
+    "@cdk-7layer-constructs/kinesis-firehose-transformer": "^0.1.21",
     "source-map-support": "^0.5.19"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "^1.56.0",
+    "@aws-cdk/assert": "^1.57.0",
     "@types/node": "^10.17.0",
-    "aws-cdk": "^1.56.0",
+    "aws-cdk": "^1.57.0",
     "cdkdx": "^0.1.14"
   },
   "eslintConfig": {

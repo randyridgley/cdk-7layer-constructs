@@ -1,6 +1,6 @@
 {
   "name": "@cdk-7layer-constructs/fargate-twitter-reader",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "license": "Apache-2.0",
   "author": "Ridgley, Randy",
   "engines": {
@@ -12,38 +12,31 @@
     "build": "cdkdx build",
     "test": "cdkdx test",
     "lint": "cdkdx lint",
+    "upgrade:cdk": "cdkdx upgrade-cdk",
     "docgen": "cdkdx docgen",
     "package": "cdkdx package",
     "release:npm": "cdkdx release npm",
-    "release:pypi": "cdkdx release pypi",
-    "versionup": "lerna version --conventional-commits --no-git-tag-version --scope @cdk-7layer-constructs/*",
-    "versionup:patch": "lerna version patch --conventional-commits --no-git-tag-version",
-    "versionup:minor": "lerna version minor --conventional-commits --no-git-tag-version",
-    "versionup:major": "lerna version major --conventional-commits --no-git-tag-version",
-    "postversionup": "npm run commit-version",
-    "postversionup:patch": "npm run commit-version",
-    "postversionup:minor": "npm run commit-version",
-    "postversionup:major": "npm run commit-version"
+    "release:pypi": "cdkdx release pypi"
   },
   "peerDependencies": {
-    "@aws-cdk/aws-ec2": "^1.56.0",
-    "@aws-cdk/aws-ecs": "^1.56.0",
-    "@aws-cdk/aws-iam": "^1.56.0",
-    "@aws-cdk/aws-logs": "^1.56.0",
-    "@aws-cdk/core": "^1.56.0"
+    "@aws-cdk/aws-ec2": "^1.57.0",
+    "@aws-cdk/aws-ecs": "^1.57.0",
+    "@aws-cdk/aws-iam": "^1.57.0",
+    "@aws-cdk/aws-logs": "^1.57.0",
+    "@aws-cdk/core": "^1.57.0"
   },
   "dependencies": {
-    "@aws-cdk/aws-ec2": "^1.56.0",
-    "@aws-cdk/aws-ecr": "^1.56.0",
-    "@aws-cdk/aws-ecr-assets": "^1.56.0",
-    "@aws-cdk/aws-ecs": "^1.56.0",
-    "@aws-cdk/aws-iam": "^1.56.0",
-    "@aws-cdk/aws-logs": "^1.56.0",
-    "@aws-cdk/aws-secretsmanager": "^1.56.0",
-    "@aws-cdk/core": "^1.56.0"
+    "@aws-cdk/aws-ec2": "^1.57.0",
+    "@aws-cdk/aws-ecr": "^1.57.0",
+    "@aws-cdk/aws-ecr-assets": "^1.57.0",
+    "@aws-cdk/aws-ecs": "^1.57.0",
+    "@aws-cdk/aws-iam": "^1.57.0",
+    "@aws-cdk/aws-logs": "^1.57.0",
+    "@aws-cdk/aws-secretsmanager": "^1.57.0",
+    "@aws-cdk/core": "^1.57.0"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "^1.56.0",
+    "@aws-cdk/assert": "^1.57.0",
     "@types/node": "^10.17.0",
     "cdkdx": "^0.1.14"
   },
