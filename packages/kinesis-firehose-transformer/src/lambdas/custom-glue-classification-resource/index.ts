@@ -28,6 +28,7 @@ export const onCreate = async (event: CloudFormationCustomResourceCreateEvent): 
         DatabaseName: props.databaseName,
         Name: props.tableName,
       };
+      
       const table = (await glue.getTable(paramsGet).promise()).Table;
     
       if(table) {
@@ -49,24 +50,29 @@ export const onCreate = async (event: CloudFormationCustomResourceCreateEvent): 
         };
     
         await glue.updateTable(paramsUpdate).promise();
-        console.log(`Updated Glue Classification for table ${props.tableName}`);
+        console.log(`Updated Glue Classification for table ${props.tableName}.${props.tableName}`);
       }
     } catch (err) {
         console.error(err);
     }
-    return {
-        Status: 'SUCCESS',
-        PhysicalResourceId: databaseTableName,
-        StackId: event.StackId,
-        RequestId: event.RequestId,
-        LogicalResourceId: event.LogicalResourceId,
+
+    const result: CloudFormationCustomResourceResponse  = {
+      Status: 'SUCCESS',
+      PhysicalResourceId: databaseTableName,
+      Reason: 'Successfully updated Glue Table Classification',
+      StackId: event.StackId,
+      RequestId: event.RequestId,
+      LogicalResourceId: event.LogicalResourceId,
     };
+    console.log(JSON.stringify(result));
+    return result;
 };
 
 // no-op
 export const onUpdate = async (event: CloudFormationCustomResourceUpdateEvent): Promise<CloudFormationCustomResourceResponse> => {
     return {
         Status: 'SUCCESS',
+        Reason: 'no-op',
         RequestId: event.RequestId,
         StackId: event.StackId,
         LogicalResourceId: event.LogicalResourceId,
@@ -78,6 +84,7 @@ export const onUpdate = async (event: CloudFormationCustomResourceUpdateEvent): 
 export const onDelete = async (event: CloudFormationCustomResourceDeleteEvent): Promise<CloudFormationCustomResourceResponse> => {
     return {
         Status: 'SUCCESS',
+        Reason: 'no-op',
         RequestId: event.RequestId,
         StackId: event.StackId,
         LogicalResourceId: event.LogicalResourceId,
@@ -85,7 +92,7 @@ export const onDelete = async (event: CloudFormationCustomResourceDeleteEvent): 
     };
 };
 
-export const onEvent = (event: CloudFormationCustomResourceEvent): Promise<CloudFormationCustomResourceResponse> => {
+export const handler = (event: CloudFormationCustomResourceEvent): Promise<CloudFormationCustomResourceResponse> => {
     console.log(JSON.stringify(event));
     try {
         switch (event.RequestType) {

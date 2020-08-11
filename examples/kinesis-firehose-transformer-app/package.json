@@ -1,6 +1,6 @@
 {
   "name": "kinesis-firehose-transformer-app",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "license": "MIT",
   "author": "Ridgley, Randy",
   "private": true,
@@ -19,7 +19,7 @@
     "@aws-cdk/aws-logs": "^1.57.0",
     "@aws-cdk/aws-s3": "^1.57.0",
     "@aws-cdk/core": "^1.57.0",
-    "@cdk-7layer-constructs/kinesis-firehose-transformer": "^0.1.22",
+    "@cdk-7layer-constructs/kinesis-firehose-transformer": "^0.1.23",
     "source-map-support": "^0.5.19"
   },
   "devDependencies": {
