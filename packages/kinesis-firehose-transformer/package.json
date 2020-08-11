@@ -1,7 +1,7 @@
 {
   "name": "@cdk-7layer-constructs/kinesis-firehose-transformer",
   "description": "Kinesis Firehose Transformer to automatically convert JSON data sent to Firehose to Parquet",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "license": "Apache-2.0",
   "author": {
     "name": "Randy Ridgley",
@@ -70,6 +70,7 @@
     "@aws-cdk/assert": "^1.57.0",
     "@types/node": "^10.17.0",
     "aws-lambda": "^1.0.6",
+    "custom-resource-helper": "^1.0.14",
     "jest-cdk-snapshot": "^1.3.0"
   },
   "eslintConfig": {

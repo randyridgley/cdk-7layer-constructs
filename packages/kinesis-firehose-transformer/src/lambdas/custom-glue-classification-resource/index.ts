@@ -13,8 +13,6 @@ interface GlueClassificationProps {
   dataFormat: string;
 }
 
-const glue = new Glue();
-
 const getProperties = (props: CloudFormationCustomResourceEvent['ResourceProperties']): GlueClassificationProps => ({
   tableName: props.TableName,
   databaseName: props.DatabaseName,
@@ -22,86 +20,86 @@ const getProperties = (props: CloudFormationCustomResourceEvent['ResourcePropert
 });
 
 export const onCreate = async (event: CloudFormationCustomResourceCreateEvent): Promise<CloudFormationCustomResourceResponse> => {
-  console.log("REQUEST RECEIVED:\n" + JSON.stringify(event));
-  const props = getProperties(event.ResourceProperties);
-
-  const paramsGet = {
-    DatabaseName: props.databaseName,
-    Name: props.tableName,
-  };
-  const table = (await glue.getTable(paramsGet).promise()).Table;
-
-  if(table) {
-    if(table.Parameters === undefined) {
-      table.Parameters = {}  
-    }
-    table.Parameters.classification = props.dataFormat
-
-    const paramsUpdate = {
-      DatabaseName: props.databaseName,
-      TableInput: {
-        Name: table.Name,
-        StorageDescriptor: table.StorageDescriptor,
-        Parameters: {
-            ...table.Parameters,
-        },
-        PartitionKeys: table.PartitionKeys,
+    const glue = new Glue();
+    const databaseTableName = event.ResourceProperties.DatabaseName + '-' + event.ResourceProperties.TableName
+    try {
+      const props = getProperties(event.ResourceProperties);      
+      const paramsGet = {
+        DatabaseName: props.databaseName,
+        Name: props.tableName,
+      };
+      const table = (await glue.getTable(paramsGet).promise()).Table;
+    
+      if(table) {
+        if(table.Parameters === undefined) {
+          table.Parameters = {}  
+        }
+        table.Parameters.classification = props.dataFormat
+    
+        const paramsUpdate = {
+          DatabaseName: props.databaseName,
+          TableInput: {
+            Name: table.Name,
+            StorageDescriptor: table.StorageDescriptor,
+            Parameters: {
+                ...table.Parameters,
+            },
+            PartitionKeys: table.PartitionKeys,
+          }
+        };
+    
+        await glue.updateTable(paramsUpdate).promise();
+        console.log(`Updated Glue Classification for table ${props.tableName}`);
       }
-    };
-
-    await glue.updateTable(paramsUpdate).promise();
-    console.log(`Updated Glue Classification for table ${props.tableName}`);
-  }
-
-  console.log("REQUEST Returned:\n" + JSON.stringify(event));
-  return {
-      Status: 'SUCCESS',
-      PhysicalResourceId: `${props.databaseName}.${props.tableName}`,
-      StackId: event.StackId,
-      RequestId: event.RequestId,
-      LogicalResourceId: event.LogicalResourceId,
-      Data: {
-        Table: props.tableName,
-        Database: props.databaseName,
-      },
-  };
-};
-
-export const onUpdate = async (event: CloudFormationCustomResourceUpdateEvent): Promise<CloudFormationCustomResourceResponse> => {
-  return {
-    Status: 'SUCCESS',
-    RequestId: event.RequestId,
-    StackId: event.StackId,
-    LogicalResourceId: event.LogicalResourceId,
-    PhysicalResourceId: event.PhysicalResourceId,
-  };
-};
-
-export const onDelete = async (event: CloudFormationCustomResourceDeleteEvent): Promise<CloudFormationCustomResourceResponse> => {
-  return {
-    Status: 'SUCCESS',
-    RequestId: event.RequestId,
-    StackId: event.StackId,
-    LogicalResourceId: event.LogicalResourceId,
-    PhysicalResourceId: event.PhysicalResourceId,
-  };
-};
-
-export const handler = (event: CloudFormationCustomResourceEvent): Promise<CloudFormationCustomResourceResponse> => {
-  console.log(JSON.stringify(event));
-  try {
-    switch (event.RequestType) {
-        case 'Create':
-            return onCreate(event as CloudFormationCustomResourceCreateEvent);
-        case 'Update':
-            return onUpdate(event as CloudFormationCustomResourceUpdateEvent);
-        case 'Delete':
-            return onDelete(event as CloudFormationCustomResourceDeleteEvent);
-        default:
-            return Promise.reject(`Unknown event type in event ${event}`);
+    } catch (err) {
+        console.error(err);
     }
-  } catch (err) {
-    console.error(err);
-    return Promise.reject('Failed');
-  }
+    return {
+        Status: 'SUCCESS',
+        PhysicalResourceId: databaseTableName,
+        StackId: event.StackId,
+        RequestId: event.RequestId,
+        LogicalResourceId: event.LogicalResourceId,
+    };
+};
+
+// no-op
+export const onUpdate = async (event: CloudFormationCustomResourceUpdateEvent): Promise<CloudFormationCustomResourceResponse> => {
+    return {
+        Status: 'SUCCESS',
+        RequestId: event.RequestId,
+        StackId: event.StackId,
+        LogicalResourceId: event.LogicalResourceId,
+        PhysicalResourceId: event.PhysicalResourceId,
+    };
+};
+
+// no-op
+export const onDelete = async (event: CloudFormationCustomResourceDeleteEvent): Promise<CloudFormationCustomResourceResponse> => {
+    return {
+        Status: 'SUCCESS',
+        RequestId: event.RequestId,
+        StackId: event.StackId,
+        LogicalResourceId: event.LogicalResourceId,
+        PhysicalResourceId: event.PhysicalResourceId,
+    };
+};
+
+export const onEvent = (event: CloudFormationCustomResourceEvent): Promise<CloudFormationCustomResourceResponse> => {
+    console.log(JSON.stringify(event));
+    try {
+        switch (event.RequestType) {
+            case 'Create':
+                return onCreate(event as CloudFormationCustomResourceCreateEvent);
+            case 'Update':
+                return onUpdate(event as CloudFormationCustomResourceUpdateEvent);
+            case 'Delete':
+                return onDelete(event as CloudFormationCustomResourceDeleteEvent);
+            default:
+                return Promise.reject(`Unknown event type in event ${event}`);
+        }
+    } catch (err) {
+        console.error(err);
+        return Promise.reject('Failed');
+    }
 };
