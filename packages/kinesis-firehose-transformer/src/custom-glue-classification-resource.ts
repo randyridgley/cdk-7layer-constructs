@@ -17,11 +17,7 @@ export class CustomGlueClassificationResource extends cdk.Construct {
 
     new cfn.CustomResource(this, "GlueClassification", {
         provider: cfn.CustomResourceProvider.lambda(
-          new lambda.SingletonFunction(
-            this,
-            "CustomGlueClassificationResourceFunction",
-            {
-              uuid: uuid(),
+          new lambda.Function(this, "CustomGlueClassificationResourceFunction", {
               code: lambda.Code.fromAsset(
                 path.join(__dirname, "lambdas/custom-glue-classification-resource")
               ),
