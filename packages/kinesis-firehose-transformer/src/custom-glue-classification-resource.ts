@@ -9,7 +9,7 @@ export interface CustomGlueClassificationResourceProps {
   readonly dataFormat: string;
   readonly tableName: string;
   readonly databaseName: string;
-  readonly roleArn: string
+  readonly roleArn: string;
 }
 
 export class CustomGlueClassificationResource extends cdk.Construct {

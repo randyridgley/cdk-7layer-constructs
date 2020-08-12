@@ -242,8 +242,8 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
       sourceCC.node.addDependency(sourceTable);
 
       if(props.useLakeformation) {
-        allowLakeFormationTableAccess(this, 'SourceDBPermission', 'SourceTablePermission', sourceDatabase.databaseName, sourceTable, kdfTransformerRole.roleArn)
-        allowLakeFormationTableAccess(this, 'SourceCustomResourceDBPermission', 'SourceCustomResourcePermission', sourceDatabase.databaseName, sourceTable, customResourceLambdaRole.roleArn)
+        allowLakeFormationTableAccess(this, 'SourceDBPermission', 'SourceTablePermission', sourceDatabase.databaseName, sourceTable, kdfTransformerRole.roleArn, sourceCC)
+        allowLakeFormationTableAccess(this, 'SourceCustomResourceDBPermission', 'SourceCustomResourcePermission', sourceDatabase.databaseName, sourceTable, customResourceLambdaRole.roleArn, sourceCC)
       }
 
       backupConfig = {
@@ -307,11 +307,6 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
       partitionKeys: partitionKeys
     });
 
-    if(props.useLakeformation) {
-      allowLakeFormationTableAccess(this, 'TargetDBPermission', 'TargetTablePermission', targetDatabase.databaseName, targetTable, kdfTransformerRole.roleArn)
-      allowLakeFormationTableAccess(this, 'TargetCustomResourceDBPermission', 'TargetCustomResourcePermission', targetDatabase.databaseName, targetTable, customResourceLambdaRole.roleArn)
-    }
-
     const targetCC = new CustomGlueClassificationResource(this, "TargetGlueClassification", {
       dataFormat: 'parquet',
       databaseName: targetDatabase.databaseName,
@@ -320,6 +315,11 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
     });
 
     targetCC.node.addDependency(targetTable);
+
+    if(props.useLakeformation) {
+      allowLakeFormationTableAccess(this, 'TargetDBPermission', 'TargetTablePermission', targetDatabase.databaseName, targetTable, kdfTransformerRole.roleArn, targetCC)
+      allowLakeFormationTableAccess(this, 'TargetCustomResourceDBPermission', 'TargetCustomResourcePermission', targetDatabase.databaseName, targetTable, customResourceLambdaRole.roleArn, targetCC)
+    }
 
     const transformerDS = new CfnDeliveryStream(this, 'KDS', {
       deliveryStreamName: props.deliveryStreamName,
@@ -395,7 +395,7 @@ export function makeLakeFormationResource(construct: cdk.Construct, resourceId: 
   dlPermission.node.addDependency(dlResource)
 }
 
-export function allowLakeFormationTableAccess(construct: cdk.Construct, dbPermissionId: string, tablePermissionId: string, databaseName:string, table:Table, roleArn:string) {
+export function allowLakeFormationTableAccess(construct: cdk.Construct, dbPermissionId: string, tablePermissionId: string, databaseName:string, table:Table, roleArn:string, cc:CustomGlueClassificationResource) {
   // Job LakeFormation permission to allow access to create table under secure_db
   const lfp = new CfnPermissions(construct, dbPermissionId, {
     dataLakePrincipal: {
@@ -414,6 +414,7 @@ export function allowLakeFormationTableAccess(construct: cdk.Construct, dbPermis
   });
 
   lfp.node.addDependency(table);
+  cc.node.addDependency(lfp)
 
   // do I need these lakeformation permissions for the kinesis role?
   const tablePermission = new CfnPermissions(construct, tablePermissionId, {
