@@ -16,21 +16,20 @@ export class CustomGlueClassificationResource extends cdk.Construct {
     super(scope, id);
 
     new cfn.CustomResource(this, "GlueClassification", {
-        provider: cfn.CustomResourceProvider.lambda(
-          new lambda.Function(this, "CustomGlueClassificationResourceFunction", {
-              code: lambda.Code.fromAsset(
-                path.join(__dirname, "lambdas/custom-glue-classification-resource")
-              ),
-              handler: "index.handler",
-              timeout: cdk.Duration.seconds(30),
-              runtime: lambda.Runtime.NODEJS_12_X,
-              role: iam.Role.fromRoleArn(this, 'CustomRole', props.roleArn)
-            }
-          )
-        ),
-        properties: props
-      }
-    );
+      provider: cfn.CustomResourceProvider.lambda(
+        new lambda.SingletonFunction(this, "CustomGlueClassificationResourceFunction", {
+          uuid: 'd8d85062-7bd5-41bc-a1f7-4c00e4fbeac7',
+          code: lambda.Code.fromAsset(
+            path.join(__dirname, "lambdas/custom-glue-classification-resource")
+          ),
+          handler: "index.handler",
+          timeout: cdk.Duration.seconds(30),
+          runtime: lambda.Runtime.NODEJS_12_X,
+          role: iam.Role.fromRoleArn(this, 'CustomRole', props.roleArn)
+        })
+      ),
+      properties: props
+    });
   }
 }
 

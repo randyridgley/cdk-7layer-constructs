@@ -396,46 +396,46 @@ export function makeLakeFormationResource(construct: cdk.Construct, resourceId: 
 }
 
 export function allowLakeFormationTableAccess(construct: cdk.Construct, dbPermissionId: string, tablePermissionId: string, databaseName:string, table:Table, roleArn:string) {
-      // Job LakeFormation permission to allow access to create table under secure_db
-      const lfp = new CfnPermissions(construct, dbPermissionId, {
-        dataLakePrincipal: {
-          dataLakePrincipalIdentifier: roleArn,
-        },
-        resource: {
-          databaseResource: {
-            name: databaseName
-          }
-        },
-        permissions: [
-          'ALTER',
-          'CREATE_TABLE',
-          'DROP'
-        ]
-      });
+  // Job LakeFormation permission to allow access to create table under secure_db
+  const lfp = new CfnPermissions(construct, dbPermissionId, {
+    dataLakePrincipal: {
+      dataLakePrincipalIdentifier: roleArn,
+    },
+    resource: {
+      databaseResource: {
+        name: databaseName
+      }
+    },
+    permissions: [
+      'ALTER',
+      'CREATE_TABLE',
+      'DROP'
+    ]
+  });
 
-      lfp.node.addDependency(table);
+  lfp.node.addDependency(table);
 
-      // do I need these lakeformation permissions for the kinesis role?
-      const tablePermission = new CfnPermissions(construct, tablePermissionId, {
-        dataLakePrincipal: {
-          dataLakePrincipalIdentifier: roleArn
-        },
-        resource: {
-          tableResource: {
-              databaseName: databaseName,
-              name: table.tableName,
-          }
-        },
-        permissions: [
-          'ALTER',
-          'DROP',
-          'DELETE',
-          'INSERT',
-          'SELECT'
-        ]
-      });
-  
-      tablePermission.node.addDependency(table)
+  // do I need these lakeformation permissions for the kinesis role?
+  const tablePermission = new CfnPermissions(construct, tablePermissionId, {
+    dataLakePrincipal: {
+      dataLakePrincipalIdentifier: roleArn
+    },
+    resource: {
+      tableResource: {
+          databaseName: databaseName,
+          name: table.tableName,
+      }
+    },
+    permissions: [
+      'ALTER',
+      'DROP',
+      'DELETE',
+      'INSERT',
+      'SELECT'
+    ]
+  });
+
+  tablePermission.node.addDependency(table)
 }
 
 export function getDataFormatString(format:DataFormat): string {
