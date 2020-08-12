@@ -39,12 +39,12 @@ export class FargateTwitterReader extends Construct {
       "kinesis_delivery": props.kinesisFirehoseName
     }
 
-    new sm.CfnSecret(this, 'TwitterConfig', {
+    const secret = new sm.CfnSecret(this, 'TwitterConfig', {
       secretString: JSON.stringify(config),
       name: '/cdk-7layer-constructs/twitter-config',
       description: 'Twitter Configuration for Fargate Twitter Reader'      
     });
-    
+
     const ecsRole = new Role(this, 'ECSRole', {
       roleName: 'ECSTwitterReaderRole', 
       assumedBy: new ServicePrincipal('ecs-tasks.amazonaws.com'),
@@ -55,12 +55,19 @@ export class FargateTwitterReader extends Construct {
 
     ecsRole.addToPolicy(new PolicyStatement({
       actions: [
-        "kinesis:PutRecords",
-        "secretsmanager:GetSecretValue"
+        "kinesis:PutRecords"
       ],
       resources: [
-        `arn:aws:firehose:${Aws.REGION}:${Aws.ACCOUNT_ID}:firehose/${props.kinesisFirehoseName}`,
-        `arn:aws:secretsmanager:${Aws.REGION}:${Aws.ACCOUNT_ID}:endpoint/*`
+        `arn:aws:firehose:${Aws.REGION}:${Aws.ACCOUNT_ID}:firehose/${props.kinesisFirehoseName}`
+      ]
+    }));
+
+    ecsRole.addToPolicy(new PolicyStatement({
+      actions: [
+        "secretesmanager:GetSecretValue"
+      ],
+      resources: [
+        secret.ref
       ]
     }));
 
