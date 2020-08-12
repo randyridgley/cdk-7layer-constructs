@@ -215,8 +215,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
           ],
           resources: ['*']
         }));
-        makeLakeFormationResource(this, 'SourceBucketResource', 'SourceResourcePermission', sourceBucket.bucketArn, kdfTransformerRole.roleArn);
-        makeLakeFormationResource(this, 'CCSourceBucketResource', 'CCSourceResourcePermission', sourceBucket.bucketArn, customResourceLambdaRole.roleArn);
+        makeLakeFormationResource(this, 'SourceBucketResource', 'SourceResourcePermission', 'CCSourceResourcePermission', sourceBucket.bucketArn, kdfTransformerRole.roleArn, customResourceLambdaRole.roleArn);
       }
 
       const sourceTable = new Table(this, 'SourceTable', {
@@ -292,8 +291,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
     }));
 
     if(props.useLakeformation) {
-      makeLakeFormationResource(this, 'TargetBucketResource', 'TargetBucketPermission', targetBucket.bucketArn, kdfTransformerRole.roleArn);
-      makeLakeFormationResource(this, 'CCTargetBucketResource', 'CCTargetResourcePermission', targetBucket.bucketArn, customResourceLambdaRole.roleArn);
+      makeLakeFormationResource(this, 'TargetBucketResource', 'TargetBucketPermission', 'CCTargetResourcePermission', targetBucket.bucketArn, kdfTransformerRole.roleArn, customResourceLambdaRole.roleArn);
     }
 
     const targetTable = new Table(this, 'TargetParquetTable', {
@@ -374,7 +372,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
   }
 }
 
-export function makeLakeFormationResource(construct: cdk.Construct, resourceId: string, permissionId:string, bucketArn: string, roleArn:string) {
+export function makeLakeFormationResource(construct: cdk.Construct, resourceId: string, permissionId:string, ccPermissionId:string, bucketArn: string, roleArn:string, ccRoleArn:string) {
   const dlResource = new CfnResource(construct, resourceId, {
     resourceArn: bucketArn,
     roleArn: roleArn,
@@ -395,6 +393,21 @@ export function makeLakeFormationResource(construct: cdk.Construct, resourceId: 
     ]
   });
   dlPermission.node.addDependency(dlResource)
+
+  const dlCCPermission = new CfnPermissions(construct, ccPermissionId, {
+    dataLakePrincipal: {
+      dataLakePrincipalIdentifier: ccRoleArn,
+    },
+    resource: {
+      dataLocationResource: {
+        s3Resource: bucketArn
+      }
+    },
+    permissions: [
+      'DATA_LOCATION_ACCESS'
+    ]
+  });
+  dlCCPermission.node.addDependency(dlResource)
 }
 
 export function allowLakeFormationTableAccess(construct: cdk.Construct, dbPermissionId: string, tablePermissionId: string, databaseName:string, table:Table, roleArn:string, cc:CustomGlueClassificationResource) {
