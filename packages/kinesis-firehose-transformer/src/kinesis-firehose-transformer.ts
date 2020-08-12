@@ -226,7 +226,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
         bucket: sourceBucket,
         compressed: false,
         description: `Backup original data table for ${props.sourceBackupConfig.tableName}`,
-        s3Prefix: props.sourceBackupConfig.s3prefix ?? `${props.sourceBackupConfig.tableName}/processed/`,
+        s3Prefix: props.sourceBackupConfig.s3prefix !== undefined ? props.sourceBackupConfig.s3prefix : `${props.sourceBackupConfig.tableName}/processed/`,
         storedAsSubDirectories: false,     
         partitionKeys: partitionKeys 
       });
@@ -302,7 +302,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
       bucket: targetBucket,
       compressed: false,
       description: `Target Parquet Table for ${props.targetTableConfig.tableName}`,
-      s3Prefix: props.targetTableConfig.s3prefix ?? `${props.targetTableConfig.tableName}/processed/`,
+      s3Prefix: props.targetTableConfig.s3prefix !== undefined ? props.targetTableConfig.s3prefix : `${props.targetTableConfig.tableName}/processed/`,
       storedAsSubDirectories: false,      
       partitionKeys: partitionKeys
     });

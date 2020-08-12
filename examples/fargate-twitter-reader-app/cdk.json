@@ -3,9 +3,9 @@
   "context": {
     "@aws-cdk/core:enableStackNameDuplicates": "true",
     "aws-cdk:enableDiffNoFail": "true",
-    "consumer_key": "hOOjmUj7FyMCGJbgHNS6SsQd5",
-    "consumer_secret": "9ozuDTaUERRW9hSRM53gdodQGHnJ8fiP1qkce9PcnF3VFIzN9Y",
-    "access_token": "19324723-gkug8lXCcNvTmKEMQSzt87LJWsCRVBr47EG3XLCLE",
-    "access_token_secret": "WBZaJAtCAGFSi0ygBAJ89Jq7Frb88OiDEThSVtDjQqR9x"
+    "consumer_key": "",
+    "consumer_secret": "",
+    "access_token": "",
+    "access_token_secret": ""
   }
 }

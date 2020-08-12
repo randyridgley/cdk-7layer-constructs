@@ -55,16 +55,16 @@ export class FargateTwitterReader extends Construct {
 
     ecsRole.addToPolicy(new PolicyStatement({
       actions: [
-        "kinesis:PutRecords"
+        "firehose:PutRecord"
       ],
       resources: [
-        `arn:aws:firehose:${Aws.REGION}:${Aws.ACCOUNT_ID}:firehose/${props.kinesisFirehoseName}`
+        `arn:aws:firehose:${Aws.REGION}:${Aws.ACCOUNT_ID}:deliverystream/${props.kinesisFirehoseName}`
       ]
     }));
 
     ecsRole.addToPolicy(new PolicyStatement({
       actions: [
-        "secretesmanager:GetSecretValue"
+        "secretsmanager:GetSecretValue"
       ],
       resources: [
         secret.ref
