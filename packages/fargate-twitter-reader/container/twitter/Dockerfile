@@ -23,4 +23,4 @@ USER root
 WORKDIR /home/ec2-user/twitterApp
 RUN pip3 install --user -r requirements.txt
 
-ENTRYPOINT [ "python3", "/reader/twitter-streaming.py" ]
+ENTRYPOINT [ "python3", "twitter-streaming.py" ]

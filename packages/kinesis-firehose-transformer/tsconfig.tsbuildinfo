@@ -1086,7 +1086,7 @@
         "affectsGlobalScope": false
       },
       "./src/kinesis-firehose-transformer.ts": {
-        "version": "c93833aca3d98fe88b918cf2172257de027bcb830ae41e4efe28143279b4a332",
+        "version": "068db65a3afbcf8452e694c5493f1c8c9a73d02b71863346839e17480564f5db",
         "affectsGlobalScope": false
       },
       "./src/index.ts": {
