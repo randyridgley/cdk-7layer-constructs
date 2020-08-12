@@ -14,9 +14,9 @@ interface GlueClassificationProps {
 }
 
 const getProperties = (props: CloudFormationCustomResourceEvent['ResourceProperties']): GlueClassificationProps => ({
-  tableName: props.SourceTableName,
-  databaseName: props.SourceDatabaseName,
-  dataFormat: props.SourceDataFormat,
+  tableName: props.tableName,
+  databaseName: props.databaseName,
+  dataFormat: props.dataFormat,
 });
 
 export const updateTable = async (databaseName: string, tableName: string, dataFormat: string): Promise<void> => {

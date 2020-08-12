@@ -1022,7 +1022,7 @@
         "affectsGlobalScope": false
       },
       "./src/custom-glue-classification-resource.ts": {
-        "version": "0b1fd5e1acfeddcca9b276bd0e29f09c440a00a3268e58d6b229003dc86a9f78",
+        "version": "626a31898c107ec6f70acf53cfb7020d8989c6ef8c5952e017cf3a9fb18cc4f2",
         "affectsGlobalScope": false
       },
       "../../node_modules/@aws-cdk/aws-kinesisfirehose/lib/kinesisfirehose.generated.d.ts": {
