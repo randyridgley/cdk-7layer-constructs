@@ -1,6 +1,6 @@
 {
   "name": "fargate-twitter-reader-app",
-  "version": "0.1.27",
+  "version": "0.1.28",
   "license": "MIT",
   "author": "Ridgley, Randy",
   "private": true,
@@ -19,8 +19,8 @@
     "@aws-cdk/aws-kinesisfirehose": "^1.57.0",
     "@aws-cdk/aws-s3": "^1.57.0",
     "@aws-cdk/core": "^1.57.0",
-    "@cdk-7layer-constructs/fargate-twitter-reader": "^0.1.27",
-    "@cdk-7layer-constructs/kinesis-firehose-transformer": "^0.1.27",
+    "@cdk-7layer-constructs/fargate-twitter-reader": "^0.1.28",
+    "@cdk-7layer-constructs/kinesis-firehose-transformer": "^0.1.28",
     "source-map-support": "^0.5.19"
   },
   "devDependencies": {
