@@ -216,6 +216,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
           resources: ['*']
         }));
         makeLakeFormationResource(this, 'SourceBucketResource', 'SourceResourcePermission', sourceBucket.bucketArn, kdfTransformerRole.roleArn);
+        makeLakeFormationResource(this, 'CCSourceBucketResource', 'CCSourceResourcePermission', sourceBucket.bucketArn, customResourceLambdaRole.roleArn);
       }
 
       const sourceTable = new Table(this, 'SourceTable', {
@@ -292,6 +293,7 @@ export class KinesisFirehoseTransformer extends cdk.Construct {
 
     if(props.useLakeformation) {
       makeLakeFormationResource(this, 'TargetBucketResource', 'TargetBucketPermission', targetBucket.bucketArn, kdfTransformerRole.roleArn);
+      makeLakeFormationResource(this, 'CCTargetBucketResource', 'CCTargetResourcePermission', targetBucket.bucketArn, customResourceLambdaRole.roleArn);
     }
 
     const targetTable = new Table(this, 'TargetParquetTable', {

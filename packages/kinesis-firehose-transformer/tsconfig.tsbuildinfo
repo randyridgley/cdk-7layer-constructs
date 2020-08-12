@@ -1042,7 +1042,7 @@
         "affectsGlobalScope": false
       },
       "./src/custom-glue-classification-resource.ts": {
-        "version": "db399876fe7bd56e8f765210744dd646c44d235ce7ac9c246834bd68f3d69f86",
+        "version": "587e1c33c30b20b55c410adcac6017de5f0028b3011b2163b31a546048b944e6",
         "affectsGlobalScope": false
       },
       "../../node_modules/@aws-cdk/aws-kinesisfirehose/lib/kinesisfirehose.generated.d.ts": {
@@ -1086,7 +1086,7 @@
         "affectsGlobalScope": false
       },
       "./src/kinesis-firehose-transformer.ts": {
-        "version": "09dafc6fe8c97420ce9cac0d0b691576838af08a893c4897e35376733c5b4d06",
+        "version": "eb15796d302b89e18be09fa86857d6c509dfb929ce9c05c19e53cbecfeba1def",
         "affectsGlobalScope": false
       },
       "./src/index.ts": {
@@ -1353,8 +1353,52 @@
         "version": "06236dfec90a14b0c3db8249831069ea3f90b004d73d496a559a4466e5a344a4",
         "affectsGlobalScope": false
       },
-      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger.d.ts": {
-        "version": "802ae7b75ee3ac42702ca9dacd15886560a401ff83c34029766ed179ea1ad3f7",
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/_common.d.ts": {
+        "version": "436992b7035b789a73baf1f51d66a64c218badcf1e17edd67dcb44fe6d3d009e",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/create-auth-challenge.d.ts": {
+        "version": "c1a4394c95ed285f9108d293b19572edf21c1b29125f8a17e85f8375054f5645",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/custom-message.d.ts": {
+        "version": "3070ce9849d477db20a1e6b03a430c4340e91ea3b048b2afbfb7d21d36d553d1",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/define-auth-challenge.d.ts": {
+        "version": "335b1f84324d637d116d8b7c430dfb80bf96c90c54aedaa133d43e805e41f6c6",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/post-authentication.d.ts": {
+        "version": "f7fc1c5f6c6b4e78879225e83d35775e1fd54accffce10526bab0434f9096ab4",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/post-confirmation.d.ts": {
+        "version": "51099791f268d0ca2763789d3d0a01c05c8e064b7ff7eb468e8d2be25b277c8d",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/pre-authentication.d.ts": {
+        "version": "37a51347f3dccdeef5d8a40dab80b2e5a115465f7bb4268a042947e3a5c55187",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/pre-signup.d.ts": {
+        "version": "5ff48985020588ec458560204aa20862faf4ea5f0c139c7d57264babc3e4a7c5",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/pre-token-generation.d.ts": {
+        "version": "99eadde7ee869925e07537b978a7716eb2c852598ad49ca5889fe638d7cc6b5d",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/user-migration.d.ts": {
+        "version": "405bb4cc7a0ca92a73b99e06838ab08fae8b9e0a138e48d6cd15ed009d275275",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/verify-auth-challenge-response.d.ts": {
+        "version": "e67bda6aa3fc9f8f19ea9dc66de06025c5525919c7134fe1f9ede4ed174476aa",
+        "affectsGlobalScope": false
+      },
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/index.d.ts": {
+        "version": "00b596cfb13b7339f0ffd4f9613438e4856d6285c7daea5905f0f09434b074cc",
         "affectsGlobalScope": false
       },
       "../../node_modules/@types/aws-lambda/trigger/connect-contact-flow.d.ts": {
@@ -1394,7 +1438,7 @@
         "affectsGlobalScope": false
       },
       "../../node_modules/@types/aws-lambda/index.d.ts": {
-        "version": "163ea56f8e434300ae95f4de1d7c2609d343cf0d7c7b690f3cbdd8ad9f3af429",
+        "version": "0278692933b2ed78a325f4439ed728cdae490406109eec77d628a69a941ef984",
         "affectsGlobalScope": false
       },
       "../../node_modules/@babel/types/lib/index.d.ts": {
@@ -3281,7 +3325,7 @@
         "../../node_modules/@types/aws-lambda/trigger/codepipeline-cloudwatch-stage.d.ts",
         "../../node_modules/@types/aws-lambda/trigger/codepipeline-cloudwatch.d.ts",
         "../../node_modules/@types/aws-lambda/trigger/codepipeline.d.ts",
-        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/index.d.ts",
         "../../node_modules/@types/aws-lambda/trigger/connect-contact-flow.d.ts",
         "../../node_modules/@types/aws-lambda/trigger/dynamodb-stream.d.ts",
         "../../node_modules/@types/aws-lambda/trigger/eventbridge.d.ts",
@@ -3372,8 +3416,82 @@
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
-      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger.d.ts": [
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/_common.d.ts": [
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/create-auth-challenge.d.ts": [
         "../../node_modules/@types/aws-lambda/handler.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/_common.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/custom-message.d.ts": [
+        "../../node_modules/@types/aws-lambda/handler.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/_common.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/define-auth-challenge.d.ts": [
+        "../../node_modules/@types/aws-lambda/handler.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/_common.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/index.d.ts": [
+        "../../node_modules/@types/aws-lambda/handler.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/create-auth-challenge.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/custom-message.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/define-auth-challenge.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/post-authentication.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/post-confirmation.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/pre-authentication.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/pre-signup.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/pre-token-generation.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/user-migration.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/verify-auth-challenge-response.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/post-authentication.d.ts": [
+        "../../node_modules/@types/aws-lambda/handler.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/_common.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/post-confirmation.d.ts": [
+        "../../node_modules/@types/aws-lambda/handler.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/_common.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/pre-authentication.d.ts": [
+        "../../node_modules/@types/aws-lambda/handler.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/_common.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/pre-signup.d.ts": [
+        "../../node_modules/@types/aws-lambda/handler.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/_common.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/pre-token-generation.d.ts": [
+        "../../node_modules/@types/aws-lambda/handler.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/_common.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/user-migration.d.ts": [
+        "../../node_modules/@types/aws-lambda/handler.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/_common.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts",
+        "./node_modules/@types/node/util.d.ts"
+      ],
+      "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/verify-auth-challenge-response.d.ts": [
+        "../../node_modules/@types/aws-lambda/handler.d.ts",
+        "../../node_modules/@types/aws-lambda/trigger/cognito-user-pool-trigger/_common.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts",
         "./node_modules/@types/node/util.d.ts"
       ],
